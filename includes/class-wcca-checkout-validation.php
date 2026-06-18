@@ -37,7 +37,7 @@ class WCCA_Checkout_Validation {
 
         if ( empty( $already_signed ) || $consent_posted !== '1' ) {
             wc_add_notice(
-                __( 'Please sign the consent form before placing your order.', 'wc-customer-affairs' ),
+                __( 'Please sign the consent form before placing your order.', 'woocommerce-checkout-consent' ),
                 'error'
             );
             // Stop checkout flow

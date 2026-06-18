@@ -10,7 +10,7 @@
  * Author:            Parth Odhvani
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       wc-customer-affairs
+ * Text Domain:       woocommerce-checkout-consent
  * Domain Path:       /languages
  */
 
@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 define( 'WCCA_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WCCA_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WCCA_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-define( 'WCCA_VERSION', '1.1.0' );
+define( 'WCCA_VERSION', '1.2.0' );
 
 // Autoload classes
 require_once WCCA_PLUGIN_DIR . 'includes/class-database.php';
@@ -32,6 +32,22 @@ require_once WCCA_PLUGIN_DIR . 'includes/class-export-import.php'; // FIX: was m
 
 // Create DB tables on activation
 register_activation_hook( __FILE__, array( 'WCCA_Database', 'create_tables' ) );
+
+// Load translations.
+add_action( 'init', static function () {
+    load_plugin_textdomain(
+        'woocommerce-checkout-consent',
+        false,
+        dirname( plugin_basename( __FILE__ ) ) . '/languages'
+    );
+} );
+
+// Declare compatibility with WooCommerce High-Performance Order Storage (HPOS).
+add_action( 'before_woocommerce_init', static function () {
+    if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+    }
+} );
 
 // Initialise plugin after WooCommerce is confirmed loaded
 add_action( 'plugins_loaded', static function () {

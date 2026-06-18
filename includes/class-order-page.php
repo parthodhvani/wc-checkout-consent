@@ -55,7 +55,7 @@ class WCCA_Order_Page
         if (!$sig) {
             $actions['wcca_sign'] = array(
                 'url' => esc_url(wc_get_endpoint_url('order-consent', $order->get_id(), wc_get_page_permalink('myaccount'))),
-                'name' => esc_html__('Sign Consent', 'wc-customer-affairs'),
+                'name' => esc_html__('Sign Consent', 'woocommerce-checkout-consent'),
             );
         }
 
@@ -75,14 +75,6 @@ class WCCA_Order_Page
                 WCCA_PLUGIN_URL . 'assets/css/frontend.css',
                 array(),
                 WCCA_VERSION
-            );
-
-            // Enqueue Google Fonts (Inter)
-            wp_enqueue_style(
-                'wcca-inter-font',
-                'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap',
-                array(),
-                null
             );
 
             wp_enqueue_script(
@@ -130,14 +122,14 @@ class WCCA_Order_Page
         $order_id = absint(get_query_var('order-consent'));
 
         if (!$order_id) {
-            echo '<p>' . esc_html__('No order specified.', 'wc-customer-affairs') . '</p>';
+            echo '<p>' . esc_html__('No order specified.', 'woocommerce-checkout-consent') . '</p>';
             return;
         }
 
         $order = wc_get_order($order_id);
 
         if (!$order || (int) $order->get_customer_id() !== get_current_user_id()) {
-            echo '<p>' . esc_html__('Access denied.', 'wc-customer-affairs') . '</p>';
+            echo '<p>' . esc_html__('Access denied.', 'woocommerce-checkout-consent') . '</p>';
             return;
         }
 
@@ -238,17 +230,17 @@ class WCCA_Order_Page
         <div id="wcca-modal-overlay" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="wcca-modal-title">
             <div id="wcca-modal">
                 <div id="wcca-modal-header">
-                    <h2 id="wcca-modal-title"><?php esc_html_e('Consent Required', 'wc-customer-affairs'); ?></h2>
-                    <p><?php esc_html_e('Please review and sign below to continue.', 'wc-customer-affairs'); ?></p>
+                    <h2 id="wcca-modal-title"><?php esc_html_e('Consent Required', 'woocommerce-checkout-consent'); ?></h2>
+                    <p><?php esc_html_e('Please review and sign below to continue.', 'woocommerce-checkout-consent'); ?></p>
                 </div>
 
                 <?php if ($already_signed): ?>
                     <div class="wcca-modal-success">
                         <div style="font-size:48px;margin-bottom:8px;">✅</div>
-                        <strong><?php esc_html_e('Consent Already Signed', 'wc-customer-affairs'); ?></strong>
-                        <p><?php esc_html_e('Your consent for this session has been recorded.', 'wc-customer-affairs'); ?></p>
+                        <strong><?php esc_html_e('Consent Already Signed', 'woocommerce-checkout-consent'); ?></strong>
+                        <p><?php esc_html_e('Your consent for this session has been recorded.', 'woocommerce-checkout-consent'); ?></p>
                         <button id="wcca-modal-proceed" class="wcca-modal-btn-primary" type="button">
-                            <?php esc_html_e('Continue to Checkout', 'wc-customer-affairs'); ?>
+                            <?php esc_html_e('Continue to Checkout', 'woocommerce-checkout-consent'); ?>
                         </button>
                     </div>
                     <?php if (is_checkout()): ?>
@@ -265,32 +257,32 @@ class WCCA_Order_Page
 
                         <div class="wcca-modal-section">
                             <h3>
-                                <?php esc_html_e('Your Information', 'wc-customer-affairs'); ?>
-                                <span class="wcca-auto-tag"><?php esc_html_e('Auto-filled', 'wc-customer-affairs'); ?></span>
+                                <?php esc_html_e('Your Information', 'woocommerce-checkout-consent'); ?>
+                                <span class="wcca-auto-tag"><?php esc_html_e('Auto-filled', 'woocommerce-checkout-consent'); ?></span>
                             </h3>
                             <div class="wcca-modal-grid">
                                 <div class="wcca-modal-field">
                                     <label
-                                        for="wcca-c-firstname"><?php esc_html_e('First Name', 'wc-customer-affairs'); ?></label>
+                                        for="wcca-c-firstname"><?php esc_html_e('First Name', 'woocommerce-checkout-consent'); ?></label>
                                     <input type="text" id="wcca-c-firstname" name="first_name" autocomplete="given-name" required>
                                 </div>
                                 <div class="wcca-modal-field">
-                                    <label for="wcca-c-lastname"><?php esc_html_e('Last Name', 'wc-customer-affairs'); ?></label>
+                                    <label for="wcca-c-lastname"><?php esc_html_e('Last Name', 'woocommerce-checkout-consent'); ?></label>
                                     <input type="text" id="wcca-c-lastname" name="last_name" autocomplete="family-name" required>
                                 </div>
                                 <div class="wcca-modal-field">
-                                    <label for="wcca-c-email"><?php esc_html_e('Email', 'wc-customer-affairs'); ?></label>
+                                    <label for="wcca-c-email"><?php esc_html_e('Email', 'woocommerce-checkout-consent'); ?></label>
                                     <input type="email" id="wcca-c-email" name="email" autocomplete="email" required>
                                 </div>
                                 <div class="wcca-modal-field">
-                                    <label for="wcca-c-phone"><?php esc_html_e('Phone', 'wc-customer-affairs'); ?></label>
+                                    <label for="wcca-c-phone"><?php esc_html_e('Phone', 'woocommerce-checkout-consent'); ?></label>
                                     <input type="tel" id="wcca-c-phone" name="phone" autocomplete="tel">
                                 </div>
                             </div>
                         </div>
 
                         <div class="wcca-modal-section">
-                            <h3><?php esc_html_e('Consent Declaration', 'wc-customer-affairs'); ?></h3>
+                            <h3><?php esc_html_e('Consent Declaration', 'woocommerce-checkout-consent'); ?></h3>
                             <?php
 
                             $template = get_option(
@@ -338,23 +330,23 @@ class WCCA_Order_Page
 
                         <div class="wcca-modal-section">
                             <h3>
-                                <?php esc_html_e('Digital Signature', 'wc-customer-affairs'); ?>
-                                <span class="wcca-required"><?php esc_html_e('Required', 'wc-customer-affairs'); ?></span>
+                                <?php esc_html_e('Digital Signature', 'woocommerce-checkout-consent'); ?>
+                                <span class="wcca-required"><?php esc_html_e('Required', 'woocommerce-checkout-consent'); ?></span>
                             </h3>
                             <p class="wcca-hint">
-                                <?php esc_html_e('Draw your signature using your mouse or finger.', 'wc-customer-affairs'); ?></p>
+                                <?php esc_html_e('Draw your signature using your mouse or finger.', 'woocommerce-checkout-consent'); ?></p>
                             <div class="wcca-modal-sig-container" id="wcca-modal-sig-wrap" role="img"
-                                aria-label="<?php esc_attr_e('Signature drawing area', 'wc-customer-affairs'); ?>">
+                                aria-label="<?php esc_attr_e('Signature drawing area', 'woocommerce-checkout-consent'); ?>">
                                 <canvas id="wcca-modal-canvas"></canvas>
                                 <div class="wcca-sig-placeholder" id="wcca-modal-placeholder" aria-hidden="true">
                                     <span>✍</span>
-                                    <?php esc_html_e('Sign here', 'wc-customer-affairs'); ?>
+                                    <?php esc_html_e('Sign here', 'woocommerce-checkout-consent'); ?>
                                 </div>
                             </div>
                             <div class="wcca-sig-actions">
                                 <button type="button" id="wcca-modal-clear" class="wcca-modal-btn-outline"
-                                    aria-label="<?php esc_attr_e('Clear signature', 'wc-customer-affairs'); ?>">
-                                    <?php esc_html_e('Clear', 'wc-customer-affairs'); ?>
+                                    aria-label="<?php esc_attr_e('Clear signature', 'woocommerce-checkout-consent'); ?>">
+                                    <?php esc_html_e('Clear', 'woocommerce-checkout-consent'); ?>
                                 </button>
                                 <span id="wcca-modal-sig-status" class="wcca-sig-status" aria-live="polite"></span>
                             </div>
@@ -366,10 +358,10 @@ class WCCA_Order_Page
 
                         <div class="wcca-modal-footer">
                             <button type="button" id="wcca-modal-cancel" class="wcca-modal-btn-outline">
-                                <?php esc_html_e('Cancel', 'wc-customer-affairs'); ?>
+                                <?php esc_html_e('Cancel', 'woocommerce-checkout-consent'); ?>
                             </button>
                             <button type="submit" id="wcca-modal-submit" class="wcca-modal-btn-primary" disabled>
-                                <?php esc_html_e('Sign & Continue', 'wc-customer-affairs'); ?>
+                                <?php esc_html_e('Sign & Continue', 'woocommerce-checkout-consent'); ?>
                             </button>
                         </div>
 

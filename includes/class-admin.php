@@ -113,13 +113,6 @@ class WCCA_Admin {
         }
 
         wp_enqueue_style(
-            'wcca-inter-font',
-            'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap',
-            [],
-            WCCA_VERSION
-        );
-
-        wp_enqueue_style(
             'wcca-admin',
             WCCA_PLUGIN_URL . 'assets/css/admin.css',
             [],
@@ -148,7 +141,7 @@ class WCCA_Admin {
 
     public static function render_page(): void {
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_die( esc_html__( 'You do not have permission to access this page.', 'wc-customer-affairs' ) );
+            wp_die( esc_html__( 'You do not have permission to access this page.', 'woocommerce-checkout-consent' ) );
         }
 
         $view        = sanitize_key( $_GET['wcca_view'] ?? 'list' );
@@ -157,8 +150,8 @@ class WCCA_Admin {
         <div class="wcca-wrap">
             <div class="wcca-header">
                 <div class="wcca-header-inner">
-                    <h1><?php esc_html_e( 'Customer Affairs', 'wc-customer-affairs' ); ?></h1>
-                    <p><?php esc_html_e( 'Manage customer consents, signatures and purchase history.', 'wc-customer-affairs' ); ?></p>
+                    <h1><?php esc_html_e( 'Customer Affairs', 'woocommerce-checkout-consent' ); ?></h1>
+                    <p><?php esc_html_e( 'Manage customer consents, signatures and purchase history.', 'woocommerce-checkout-consent' ); ?></p>
                 </div>
             </div>
 
@@ -403,7 +396,7 @@ class WCCA_Admin {
 
     public static function render_export_import_page(): void {
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
-            wp_die( esc_html__( 'You do not have permission to access this page.', 'wc-customer-affairs' ) );
+            wp_die( esc_html__( 'You do not have permission to access this page.', 'woocommerce-checkout-consent' ) );
         }
 
         // Show import result notice if one was stored in a transient
@@ -578,40 +571,40 @@ class WCCA_Admin {
         <div class="wcca-stats-bar">
             <div class="wcca-stat-card">
                 <span class="stat-number"><?php echo esc_html( number_format( $total_orders ) ); ?></span>
-                <span class="stat-label"><?php esc_html_e( 'Total Orders', 'wc-customer-affairs' ); ?></span>
+                <span class="stat-label"><?php esc_html_e( 'Total Orders', 'woocommerce-checkout-consent' ); ?></span>
             </div>
             <div class="wcca-stat-card">
                 <span class="stat-number"><?php echo esc_html( number_format( $total_signed ) ); ?></span>
-                <span class="stat-label"><?php esc_html_e( 'Signed Consents', 'wc-customer-affairs' ); ?></span>
+                <span class="stat-label"><?php esc_html_e( 'Signed Consents', 'woocommerce-checkout-consent' ); ?></span>
             </div>
             <div class="wcca-stat-card">
                 <span class="stat-number"><?php echo esc_html( number_format( $this_month ) ); ?></span>
-                <span class="stat-label"><?php esc_html_e( 'Signed This Month', 'wc-customer-affairs' ); ?></span>
+                <span class="stat-label"><?php esc_html_e( 'Signed This Month', 'woocommerce-checkout-consent' ); ?></span>
             </div>
             <div class="wcca-stat-card">
                 <span class="stat-number"><?php echo esc_html( number_format( count( $customers ) ) ); ?></span>
-                <span class="stat-label"><?php esc_html_e( 'Customers', 'wc-customer-affairs' ); ?></span>
+                <span class="stat-label"><?php esc_html_e( 'Customers', 'woocommerce-checkout-consent' ); ?></span>
             </div>
         </div>
 
         <div class="wcca-search-bar">
             <input type="text"
                    id="wcca-search"
-                   placeholder="<?php esc_attr_e( 'Search by name, email or order #…', 'wc-customer-affairs' ); ?>"
-                   aria-label="<?php esc_attr_e( 'Search customers', 'wc-customer-affairs' ); ?>">
+                   placeholder="<?php esc_attr_e( 'Search by name, email or order #…', 'woocommerce-checkout-consent' ); ?>"
+                   aria-label="<?php esc_attr_e( 'Search customers', 'woocommerce-checkout-consent' ); ?>">
         </div>
 
         <div class="wcca-table-wrap">
             <table class="wcca-table" id="wcca-customers-table">
                 <thead>
                     <tr>
-                        <th><?php esc_html_e( 'Customer', 'wc-customer-affairs' ); ?></th>
-                        <th><?php esc_html_e( 'Email', 'wc-customer-affairs' ); ?></th>
-                        <th><?php esc_html_e( 'Registered', 'wc-customer-affairs' ); ?></th>
-                        <th><?php esc_html_e( 'Orders', 'wc-customer-affairs' ); ?></th>
-                        <th><?php esc_html_e( 'Total Spent', 'wc-customer-affairs' ); ?></th>
-                        <th><?php esc_html_e( 'Last Signed', 'wc-customer-affairs' ); ?></th>
-                        <th><?php esc_html_e( 'Actions', 'wc-customer-affairs' ); ?></th>
+                        <th><?php esc_html_e( 'Customer', 'woocommerce-checkout-consent' ); ?></th>
+                        <th><?php esc_html_e( 'Email', 'woocommerce-checkout-consent' ); ?></th>
+                        <th><?php esc_html_e( 'Registered', 'woocommerce-checkout-consent' ); ?></th>
+                        <th><?php esc_html_e( 'Orders', 'woocommerce-checkout-consent' ); ?></th>
+                        <th><?php esc_html_e( 'Total Spent', 'woocommerce-checkout-consent' ); ?></th>
+                        <th><?php esc_html_e( 'Last Signed', 'woocommerce-checkout-consent' ); ?></th>
+                        <th><?php esc_html_e( 'Actions', 'woocommerce-checkout-consent' ); ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -655,13 +648,13 @@ class WCCA_Admin {
                                 <?php if ( $last_signed ) : ?>
                                     <span class="wcca-tag signed">✓ <?php echo esc_html( wp_date( 'M j, Y', strtotime( $last_signed ) ) ); ?></span>
                                 <?php else : ?>
-                                    <span class="wcca-tag unsigned"><?php esc_html_e( '— Not signed', 'wc-customer-affairs' ); ?></span>
+                                    <span class="wcca-tag unsigned"><?php esc_html_e( '— Not signed', 'woocommerce-checkout-consent' ); ?></span>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <a href="<?php echo esc_url( add_query_arg( array( 'wcca_view' => 'detail', 'customer_id' => $customer->ID ) ) ); ?>"
                                    class="wcca-btn wcca-btn-primary">
-                                    <?php esc_html_e( 'View', 'wc-customer-affairs' ); ?>
+                                    <?php esc_html_e( 'View', 'woocommerce-checkout-consent' ); ?>
                                 </a>
                             </td>
                         </tr>
@@ -678,7 +671,7 @@ class WCCA_Admin {
         $user = get_userdata( $customer_id );
 
         if ( ! $user ) {
-            echo '<p>' . esc_html__( 'Customer not found.', 'wc-customer-affairs' ) . '</p>';
+            echo '<p>' . esc_html__( 'Customer not found.', 'woocommerce-checkout-consent' ) . '</p>';
             return;
         }
 
@@ -696,7 +689,7 @@ class WCCA_Admin {
         <div class="wcca-detail-wrap">
             <a href="<?php echo esc_url( remove_query_arg( array( 'wcca_view', 'customer_id' ) ) ); ?>"
                class="wcca-back">
-                ← <?php esc_html_e( 'Back to Customers', 'wc-customer-affairs' ); ?>
+                ← <?php esc_html_e( 'Back to Customers', 'woocommerce-checkout-consent' ); ?>
             </a>
 
             <div class="wcca-detail-grid">
@@ -711,26 +704,26 @@ class WCCA_Admin {
 
                     <div class="wcca-profile-meta">
                         <div>
-                            <label><?php esc_html_e( 'Phone', 'wc-customer-affairs' ); ?></label>
+                            <label><?php esc_html_e( 'Phone', 'woocommerce-checkout-consent' ); ?></label>
                             <span><?php echo esc_html( $customer->get_billing_phone() ?: '—' ); ?></span>
                         </div>
                         <div>
-                            <label><?php esc_html_e( 'Member Since', 'wc-customer-affairs' ); ?></label>
+                            <label><?php esc_html_e( 'Member Since', 'woocommerce-checkout-consent' ); ?></label>
                             <span><?php echo esc_html( wp_date( 'M j, Y', strtotime( $user->user_registered ) ) ); ?></span>
                         </div>
                         <div>
-                            <label><?php esc_html_e( 'Orders', 'wc-customer-affairs' ); ?></label>
+                            <label><?php esc_html_e( 'Orders', 'woocommerce-checkout-consent' ); ?></label>
                             <span><?php echo esc_html( count( $orders ) ); ?></span>
                         </div>
                         <div>
-                            <label><?php esc_html_e( 'Total Spent', 'wc-customer-affairs' ); ?></label>
+                            <label><?php esc_html_e( 'Total Spent', 'woocommerce-checkout-consent' ); ?></label>
                             <span><?php echo wp_kses_post( wc_price( $total_spent ) ); ?></span>
                         </div>
                     </div>
 
                     <?php $addr1 = $customer->get_billing_address_1(); if ( $addr1 ) : ?>
                     <div class="wcca-address-block">
-                        <label><?php esc_html_e( 'Billing Address', 'wc-customer-affairs' ); ?></label>
+                        <label><?php esc_html_e( 'Billing Address', 'woocommerce-checkout-consent' ); ?></label>
                         <address>
                             <?php echo esc_html( $addr1 ); ?><br>
                             <?php if ( $customer->get_billing_address_2() ) : ?>
@@ -750,23 +743,23 @@ class WCCA_Admin {
 
                     <!-- Order History -->
                     <div class="wcca-section-card">
-                        <h3>📦 <?php esc_html_e( 'Order History', 'wc-customer-affairs' ); ?></h3>
+                        <h3>📦 <?php esc_html_e( 'Order History', 'woocommerce-checkout-consent' ); ?></h3>
 
                         <?php if ( empty( $orders ) ) : ?>
                             <div class="wcca-empty">
                                 <div class="wcca-empty-icon">🛒</div>
-                                <p><?php esc_html_e( 'No orders found for this customer.', 'wc-customer-affairs' ); ?></p>
+                                <p><?php esc_html_e( 'No orders found for this customer.', 'woocommerce-checkout-consent' ); ?></p>
                             </div>
                         <?php else : ?>
                         <table class="wcca-table">
                             <thead>
                                 <tr>
-                                    <th><?php esc_html_e( 'Order', 'wc-customer-affairs' ); ?></th>
-                                    <th><?php esc_html_e( 'Date', 'wc-customer-affairs' ); ?></th>
-                                    <th><?php esc_html_e( 'Status', 'wc-customer-affairs' ); ?></th>
-                                    <th><?php esc_html_e( 'Items', 'wc-customer-affairs' ); ?></th>
-                                    <th><?php esc_html_e( 'Total', 'wc-customer-affairs' ); ?></th>
-                                    <th><?php esc_html_e( 'Consent', 'wc-customer-affairs' ); ?></th>
+                                    <th><?php esc_html_e( 'Order', 'woocommerce-checkout-consent' ); ?></th>
+                                    <th><?php esc_html_e( 'Date', 'woocommerce-checkout-consent' ); ?></th>
+                                    <th><?php esc_html_e( 'Status', 'woocommerce-checkout-consent' ); ?></th>
+                                    <th><?php esc_html_e( 'Items', 'woocommerce-checkout-consent' ); ?></th>
+                                    <th><?php esc_html_e( 'Total', 'woocommerce-checkout-consent' ); ?></th>
+                                    <th><?php esc_html_e( 'Consent', 'woocommerce-checkout-consent' ); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -785,7 +778,7 @@ class WCCA_Admin {
                                 <td><?php echo wp_kses_post( $order->get_formatted_order_total() ); ?></td>
                                 <td>
                                     <?php if ( $sig ) : ?>
-                                        <span class="wcca-tag signed">✓ <?php esc_html_e( 'Signed', 'wc-customer-affairs' ); ?></span>
+                                        <span class="wcca-tag signed">✓ <?php esc_html_e( 'Signed', 'woocommerce-checkout-consent' ); ?></span>
                                         <?php if ( ! empty( $sig->pdf_path ) && file_exists( $sig->pdf_path ) ) : ?>
                                             <a href="<?php echo esc_url( add_query_arg( array(
                                                     'action' => 'wcca_download_pdf',
@@ -793,11 +786,11 @@ class WCCA_Admin {
                                                     'nonce'  => wp_create_nonce( 'wcca_pdf_' . absint( $sig->id ) ),
                                                 ), admin_url( 'admin-ajax.php' ) ) ); ?>"
                                                class="wcca-btn wcca-btn-outline wcca-btn-sm">
-                                                ↓ <?php esc_html_e( 'PDF', 'wc-customer-affairs' ); ?>
+                                                ↓ <?php esc_html_e( 'PDF', 'woocommerce-checkout-consent' ); ?>
                                             </a>
                                         <?php endif; ?>
                                     <?php else : ?>
-                                        <span class="wcca-tag unsigned"><?php esc_html_e( 'Unsigned', 'wc-customer-affairs' ); ?></span>
+                                        <span class="wcca-tag unsigned"><?php esc_html_e( 'Unsigned', 'woocommerce-checkout-consent' ); ?></span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -810,7 +803,7 @@ class WCCA_Admin {
                     <!-- Signature Timeline -->
                     <?php if ( ! empty( $signatures ) ) : ?>
                     <div class="wcca-section-card">
-                        <h3>✍ <?php esc_html_e( 'Signature History', 'wc-customer-affairs' ); ?></h3>
+                        <h3>✍ <?php esc_html_e( 'Signature History', 'woocommerce-checkout-consent' ); ?></h3>
                         <div class="wcca-timeline">
                             <?php foreach ( $signatures as $sig ) : ?>
                             <div class="wcca-timeline-item">
@@ -819,7 +812,7 @@ class WCCA_Admin {
                                     <div class="wcca-timeline-header">
                                         <strong>
                                             <?php printf(
-                                                esc_html__( 'Order #%d', 'wc-customer-affairs' ),
+                                                esc_html__( 'Order #%d', 'woocommerce-checkout-consent' ),
                                                 absint( $sig->order_id )
                                             ); ?>
                                         </strong>
@@ -829,7 +822,7 @@ class WCCA_Admin {
                                     </div>
                                     <p>
                                         <?php printf(
-                                            esc_html__( 'Signed by %1$s · %2$s', 'wc-customer-affairs' ),
+                                            esc_html__( 'Signed by %1$s · %2$s', 'woocommerce-checkout-consent' ),
                                             esc_html( $sig->first_name . ' ' . $sig->last_name ),
                                             esc_html( $sig->email )
                                         ); ?>
@@ -837,7 +830,7 @@ class WCCA_Admin {
                                     <?php if ( ! empty( $sig->signature ) ) : ?>
                                         <img src="<?php echo esc_attr( $sig->signature ); ?>"
                                              class="wcca-sig-preview"
-                                             alt="<?php esc_attr_e( 'Signature', 'wc-customer-affairs' ); ?>">
+                                             alt="<?php esc_attr_e( 'Signature', 'woocommerce-checkout-consent' ); ?>">
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -846,10 +839,10 @@ class WCCA_Admin {
                     </div>
                     <?php else : ?>
                     <div class="wcca-section-card">
-                        <h3>✍ <?php esc_html_e( 'Signature History', 'wc-customer-affairs' ); ?></h3>
+                        <h3>✍ <?php esc_html_e( 'Signature History', 'woocommerce-checkout-consent' ); ?></h3>
                         <div class="wcca-empty">
                             <div class="wcca-empty-icon">📋</div>
-                            <p><?php esc_html_e( 'No consent records found for this customer.', 'wc-customer-affairs' ); ?></p>
+                            <p><?php esc_html_e( 'No consent records found for this customer.', 'woocommerce-checkout-consent' ); ?></p>
                         </div>
                     </div>
                     <?php endif; ?>

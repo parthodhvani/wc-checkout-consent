@@ -25,20 +25,44 @@ class WCCA_PDF_Generator {
 
     public static function generate(int $sig_id): string|false
     {
+        $sig = WCCA_Database::get_signature( $sig_id );
+        if ( ! $sig ) {
+            return false;
+        }
 
-        $upload = wp_upload_dir();
+        $order = wc_get_order( (int) $sig->order_id );
+        if ( ! $order instanceof WC_Order ) {
+            return false;
+        }
 
-        $pdf_dir = trailingslashit($upload['basedir']) . 'wcca-consents/';
+        $pdf = self::build_pdf( $sig, $order, $sig_id );
+        if ( $pdf === false ) {
+            return false;
+        }
 
-        wp_mkdir_p($pdf_dir);
+        $upload  = wp_upload_dir();
+        $pdf_dir = trailingslashit( $upload['basedir'] ) . 'wcca-consents/';
 
-        $filepath = $pdf_dir . 'test.pdf';
+        if ( ! wp_mkdir_p( $pdf_dir ) ) {
+            return false;
+        }
 
-        $pdf = "%PDF-1.4\n";
-        $pdf .= "1 0 obj\n<<>>\nendobj\n";
-        $pdf .= "trailer\n<<>>\n%%EOF";
+        // Drop a silence file so the directory cannot be browsed.
+        $index_file = $pdf_dir . 'index.html';
+        if ( ! file_exists( $index_file ) ) {
+            file_put_contents( $index_file, '<!-- Silence is golden. -->' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+        }
 
-        file_put_contents($filepath, $pdf);
+        // Unguessable filename keeps these sensitive records private even though
+        // they live under wp-content/uploads. Downloads are still gated by a
+        // nonce + capability check in the AJAX handler.
+        $token    = substr( wp_hash( $sig->order_id . '|' . $sig_id . '|' . $sig->signed_at ), 0, 12 );
+        $filename = sprintf( 'consent-order-%d-%d-%s.pdf', (int) $sig->order_id, (int) $sig_id, $token );
+        $filepath = $pdf_dir . $filename;
+
+        if ( false === file_put_contents( $filepath, $pdf ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+            return false;
+        }
 
         return $filepath;
     }
@@ -58,13 +82,33 @@ class WCCA_PDF_Generator {
         int $sig_id
     ): string|false {
 
-        // ── Decode signature PNG ──────────────────────────────────────────────
-        $sig_img_data = false;
-        if ( ! empty( $sig->signature ) ) {
-            $b64   = preg_replace( '/^data:image\/png;base64,/', '', $sig->signature );
-            $raw   = base64_decode( $b64, true );
+        // ── Decode signature PNG and flatten to JPEG ──────────────────────────
+        // The signature arrives as a transparent PNG data URI. Raw PNG bytes
+        // cannot be embedded directly as a PDF image, so we flatten it onto a
+        // white background with GD and re-encode as JPEG, which embeds cleanly
+        // via the /DCTDecode filter.
+        $sig_jpeg = false;
+        $img_px_w = 0;
+        $img_px_h = 0;
+        if ( ! empty( $sig->signature ) && function_exists( 'imagecreatefromstring' ) ) {
+            $b64 = preg_replace( '/^data:image\/png;base64,/', '', $sig->signature );
+            $raw = base64_decode( $b64, true );
             if ( $raw !== false && strlen( $raw ) > 10 ) {
-                $sig_img_data = $raw;
+                $src = @imagecreatefromstring( $raw );
+                if ( $src !== false ) {
+                    $img_px_w = imagesx( $src );
+                    $img_px_h = imagesy( $src );
+                    $flat     = imagecreatetruecolor( $img_px_w, $img_px_h );
+                    $white    = imagecolorallocate( $flat, 255, 255, 255 );
+                    imagefilledrectangle( $flat, 0, 0, $img_px_w, $img_px_h, $white );
+                    imagealphablending( $flat, true );
+                    imagecopy( $flat, $src, 0, 0, 0, 0, $img_px_w, $img_px_h );
+                    ob_start();
+                    imagejpeg( $flat, null, 90 );
+                    $sig_jpeg = ob_get_clean();
+                    imagedestroy( $src );
+                    imagedestroy( $flat );
+                }
             }
         }
 
@@ -120,42 +164,31 @@ class WCCA_PDF_Generator {
         $img_w_pt   = 0;
         $img_h_pt   = 0;
 
-        if ( $sig_img_data ) {
-            // Parse PNG dimensions (bytes 16-23 of IHDR chunk)
-            $img_px_w = 0;
-            $img_px_h = 0;
-            if ( strlen( $sig_img_data ) > 24 ) {
-                $ihdr = unpack( 'Nw/Nh', substr( $sig_img_data, 16, 8 ) );
-                $img_px_w = $ihdr['w'];
-                $img_px_h = $ihdr['h'];
-            }
+        if ( $sig_jpeg && $img_px_w > 0 && $img_px_h > 0 ) {
+            // Scale to fit within content width, max height 80pt
+            $scale    = min( $cw / $img_px_w, 80 / $img_px_h, 1 );
+            $img_w_pt = (int) round( $img_px_w * $scale );
+            $img_h_pt = (int) round( $img_px_h * $scale );
 
-            if ( $img_px_w > 0 && $img_px_h > 0 ) {
-                // Scale to fit within content width, max height 80pt
-                $scale    = min( $cw / $img_px_w, 80 / $img_px_h, 1 );
-                $img_w_pt = round( $img_px_w * $scale );
-                $img_h_pt = round( $img_px_h * $scale );
+            $img_obj_id = $alloc();
+            $img_len    = strlen( $sig_jpeg );
 
-                $img_obj_id = $alloc();
-                $img_len    = strlen( $sig_img_data );
-
-                $objects[ $img_obj_id ] =
-                    "$img_obj_id 0 obj\n" .
-                    "<<\n" .
-                    "/Type /XObject\n" .
-                    "/Subtype /Image\n" .
-                    "/Width $img_px_w\n" .
-                    "/Height $img_px_h\n" .
-                    "/ColorSpace /DeviceRGB\n" .
-                    "/BitsPerComponent 8\n" .
-                    "/Filter /FlateDecode\n" .   // PNG image data uses zlib/deflate
-                    "/Length $img_len\n" .
-                    ">>\n" .
-                    "stream\n" .
-                    $sig_img_data .
-                    "\nendstream\n" .
-                    "endobj\n";
-            }
+            $objects[ $img_obj_id ] =
+                "$img_obj_id 0 obj\n" .
+                "<<\n" .
+                "/Type /XObject\n" .
+                "/Subtype /Image\n" .
+                "/Width $img_px_w\n" .
+                "/Height $img_px_h\n" .
+                "/ColorSpace /DeviceRGB\n" .
+                "/BitsPerComponent 8\n" .
+                "/Filter /DCTDecode\n" .   // JPEG-encoded image data
+                "/Length $img_len\n" .
+                ">>\n" .
+                "stream\n" .
+                $sig_jpeg .
+                "\nendstream\n" .
+                "endobj\n";
         }
 
         // ── Font resources ────────────────────────────────────────────────────
@@ -175,29 +208,6 @@ class WCCA_PDF_Generator {
         // ── Build page content stream ─────────────────────────────────────────
         $s    = '';   // PDF stream commands
         $y    = 800;  // Start near top of page (in our top-down model)
-
-        // Helper: write a line of text (with font commands)
-        // $font: 'R' or 'B'; $size: pt; $hex: PDF hex color 6 chars
-        $text_line = function( string $txt, string $font, int $size, string $hex, int $x_off = 0 )
-            use ( &$s, &$y, $ml, $H, $font_reg_id, $font_bold_id ): void
-        {
-            $fn  = ( $font === 'B' ) ? "$font_bold_id 0 R" : "$font_reg_id 0 R";
-            $fn  = ( $font === 'B' ) ? '/FB' : '/FR';
-            $r   = hexdec( substr( $hex, 0, 2 ) ) / 255;
-            $g   = hexdec( substr( $hex, 2, 2 ) ) / 255;
-            $b   = hexdec( substr( $hex, 4, 2 ) ) / 255;
-            $pdf_y = $H - $y;
-            $txt = self::pdf_escape( $txt );
-            $s  .= sprintf(
-                "BT /%s %d Tf %.4f %.4f %.4f rg %d %d Td (%s) Tj ET\n",
-                ( $font === 'B' ? 'FB' : 'FR' ),
-                $size,
-                $r, $g, $b,
-                $ml + $x_off,
-                $pdf_y,
-                $txt
-            );
-        };
 
         $move_y = function( int $delta ) use ( &$y ): void { $y += $delta; };
 
@@ -369,7 +379,7 @@ class WCCA_PDF_Generator {
         self::section_heading( $s, $y, $H, $ml, 'DIGITAL SIGNATURE' );
         $move_y( 16 );
 
-        if (false) {            // Signature box background
+        if ( $img_obj_id ) {            // Signature box background
             $s .= sprintf( "%.4f %.4f %.4f rg\n", 0.97, 0.97, 0.97 );
             $s .= sprintf( "%d %d %d %d re f\n", $ml, $H - $y - $img_h_pt - 12, $img_w_pt + 24, $img_h_pt + 12 );
             // Draw the PNG image
@@ -542,16 +552,11 @@ class WCCA_PDF_Generator {
     private static function pdf_escape( string $text ): string {
         // Strip tags, decode entities, then escape for PDF
         $text = html_entity_decode( wp_strip_all_tags( $text ), ENT_QUOTES, 'UTF-8' );
-        // Replace non-Latin1 chars with '?'
-        if (function_exists('mb_convert_encoding')) {
-            $text = mb_convert_encoding(
-                $text,
-                'ISO-8859-1',
-                'UTF-8'
-            );
-        } else {
-            $text = utf8_decode($text);
-        }        $text = str_replace( [ '\\', '(', ')', "\r", "\n" ], [ '\\\\', '\\(', '\\)', '', '' ], $text );
+        // Down-convert to Latin-1 (the WinAnsiEncoding font used in the PDF).
+        if ( function_exists( 'mb_convert_encoding' ) ) {
+            $text = mb_convert_encoding( $text, 'ISO-8859-1', 'UTF-8' );
+        }
+        $text = str_replace( [ '\\', '(', ')', "\r", "\n" ], [ '\\\\', '\\(', '\\)', '', '' ], $text );
         return $text;
     }
 }

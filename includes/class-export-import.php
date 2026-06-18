@@ -85,18 +85,18 @@ class WCCA_Export_Import
     private static function import_csv(): array
     {
         if (empty($_FILES['wcca_import_file']['tmp_name'])) {
-            return array('type' => 'error', 'message' => 'No file uploaded.');
+            return array('type' => 'error', 'message' => __('No file uploaded.', 'woocommerce-checkout-consent'));
         }
 
         $file = $_FILES['wcca_import_file']['tmp_name'];
 
         if (!is_uploaded_file($file)) {
-            return array('type' => 'error', 'message' => 'Invalid file upload.');
+            return array('type' => 'error', 'message' => __('Invalid file upload.', 'woocommerce-checkout-consent'));
         }
 
         $handle = fopen($file, 'r'); // phpcs:ignore WordPress.WP.AlternativeFunctions
         if (!$handle) {
-            return array('type' => 'error', 'message' => 'Could not read file.');
+            return array('type' => 'error', 'message' => __('Could not read file.', 'woocommerce-checkout-consent'));
         }
 
         $required = array('order_id', 'customer_id', 'first_name', 'last_name', 'email', 'phone', 'address', 'signed_at');
@@ -104,7 +104,7 @@ class WCCA_Export_Import
 
         if (!$header) {
             fclose($handle);
-            return array('type' => 'error', 'message' => 'CSV file is empty.');
+            return array('type' => 'error', 'message' => __('CSV file is empty.', 'woocommerce-checkout-consent'));
         }
 
         $header = array_map('trim', $header);
@@ -112,7 +112,8 @@ class WCCA_Export_Import
         foreach ($required as $col) {
             if (!in_array($col, $header, true)) {
                 fclose($handle);
-                return array('type' => 'error', 'message' => "Missing required column: {$col}");
+                /* translators: %s: required CSV column name. */
+                return array('type' => 'error', 'message' => sprintf(__('Missing required column: %s', 'woocommerce-checkout-consent'), $col));
             }
         }
 
@@ -160,7 +161,12 @@ class WCCA_Export_Import
 
         return array(
             'type' => 'success',
-            'message' => "Import complete: {$imported} records imported, {$skipped} skipped (already exist or invalid).",
+            /* translators: 1: number of imported records, 2: number of skipped records. */
+            'message' => sprintf(
+                __('Import complete: %1$d records imported, %2$d skipped (already exist or invalid).', 'woocommerce-checkout-consent'),
+                $imported,
+                $skipped
+            ),
         );
     }
 }

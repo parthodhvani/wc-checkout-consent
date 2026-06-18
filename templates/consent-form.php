@@ -3,8 +3,9 @@
 
     <div class="wcca-consent-header">
         <h2>📋 Order Consent Form</h2>
-         <strong>#<?php echo esc_html( $order->get_id() ); ?></strong>
-            <?php echo esc_html( wp_date('F j, Y', $order->get_date_created()->getTimestamp()) ); ?>
+        <p>
+            <strong>#<?php echo esc_html( $order->get_id() ); ?></strong>
+            <?php echo esc_html( wp_date( 'F j, Y', $order->get_date_created()->getTimestamp() ) ); ?>
         </p>
     </div>
 
@@ -36,7 +37,7 @@
                         <tr>
                             <td><?php echo esc_html($item->get_name()); ?></td>
                             <td><?php echo esc_html($item->get_quantity()); ?></td>
-                            <td><?php echo esc_html (wc_price($item->get_total())); ?></td>
+                            <td><?php echo wp_kses_post( wc_price( $item->get_total() ) ); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -53,15 +54,8 @@
 
         <!-- Consent Form -->
         <form id="wcca-consent-form" class="wcca-form">
-        <?php
-            echo esc_html (wp_nonce_field(
-                'wcca_sign',
-                '_wcca_nonce',
-                true,
-                false
-            ));
-            ?>
-            <input type="hidden" name="order_id" value="<?php   echo esc_attr($order->get_id()) ?>">
+            <?php wp_nonce_field( 'wcca_sign', '_wcca_nonce' ); ?>
+            <input type="hidden" name="order_id" value="<?php echo esc_attr( $order->get_id() ); ?>">
             <input type="hidden" id="wcca-signature-data" name="signature" value="">
 
             <div class="wcca-form-section">
