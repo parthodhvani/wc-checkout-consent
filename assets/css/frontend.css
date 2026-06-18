@@ -1,0 +1,819 @@
+
+/* =============================================================================
+   WC Customer Affairs — Frontend CSS
+   Design: DocuSign-grade signing experience — clean, trust-inducing, minimal
+============================================================================= */
+
+/* ── Design Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  --ca-f-bg:        #f7f9fc;
+  --ca-f-surface:   #ffffff;
+  --ca-f-border:    #e4e8f0;
+  --ca-f-border-2:  #f0f3f9;
+
+  --ca-f-navy:      #0f172a;
+  --ca-f-blue:      #2563eb;
+  --ca-f-blue-dk:   #1d4ed8;
+  --ca-f-blue-lt:   #dbeafe;
+  --ca-f-blue-tint: #f0f5ff;
+
+  --ca-f-text:      #0f172a;
+  --ca-f-text-2:    #475569;
+  --ca-f-text-3:    #94a3b8;
+  --ca-f-text-inv:  #ffffff;
+
+  --ca-f-green:     #16a34a;
+  --ca-f-green-bg:  #dcfce7;
+  --ca-f-red:       #dc2626;
+  --ca-f-red-bg:    #fee2e2;
+
+  --ca-f-r-sm:  8px;
+  --ca-f-r-md:  12px;
+  --ca-f-r-lg:  16px;
+  --ca-f-r-xl:  20px;
+
+  --ca-f-shadow-sm: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+  --ca-f-shadow-md: 0 4px 16px rgba(15,23,42,.07), 0 2px 6px rgba(15,23,42,.04);
+  --ca-f-shadow-lg: 0 12px 32px rgba(15,23,42,.09), 0 4px 12px rgba(15,23,42,.05);
+
+  --ca-f-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ca-f-ease: cubic-bezier(.4, 0, .2, 1);
+  --ca-f-dur:  .2s;
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────────── */
+.wcca-consent-wrap *,
+.wcca-consent-wrap *::before,
+.wcca-consent-wrap *::after {
+  box-sizing: border-box;
+}
+
+.wcca-consent-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  font-family: var(--ca-f-font);
+  color: var(--ca-f-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+.wcca-consent-header {
+  background: linear-gradient(135deg, var(--ca-f-navy) 0%, #1e3a5f 100%);
+  color: var(--ca-f-text-inv);
+  padding: 32px 36px;
+  border-radius: var(--ca-f-r-xl);
+  margin-bottom: 24px;
+  box-shadow: var(--ca-f-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.wcca-consent-header::after {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 160px; height: 160px;
+  background: radial-gradient(circle, rgba(37,99,235,.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.wcca-consent-header h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.3px;
+  color: var(--ca-f-text-inv);
+}
+
+.wcca-consent-header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: .7;
+}
+
+/* ── Alerts ─────────────────────────────────────────────────────────────────── */
+.wcca-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: var(--ca-f-r-lg);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.wcca-alert-success {
+  background: var(--ca-f-green-bg);
+  border: 1px solid #86efac;
+  color: #14532d;
+}
+
+.wcca-alert-error {
+  background: var(--ca-f-red-bg);
+  border: 1px solid #fca5a5;
+  color: #7f1d1d;
+}
+
+.wcca-alert strong {
+  font-weight: 700;
+}
+
+/* ── Cards / Sections ───────────────────────────────────────────────────────── */
+.wcca-order-summary,
+.wcca-form-section {
+  background: var(--ca-f-surface);
+  border: 1px solid var(--ca-f-border);
+  border-radius: var(--ca-f-r-xl);
+  padding: 24px 28px;
+  margin-bottom: 16px;
+  box-shadow: var(--ca-f-shadow-sm);
+}
+
+.wcca-form-section h3 {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ca-f-text);
+  letter-spacing: -.1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wcca-order-summary h3 {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ca-f-text);
+}
+
+/* ── Order items table ──────────────────────────────────────────────────────── */
+.wcca-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.wcca-items-table th {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--ca-f-text-3);
+  text-align: left;
+  border-bottom: 1px solid var(--ca-f-border);
+}
+
+.wcca-items-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ca-f-border-2);
+  color: var(--ca-f-text-2);
+  font-size: 14px;
+}
+
+.wcca-items-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.order-total td {
+  font-weight: 700;
+  color: var(--ca-f-text);
+  border-top: 2px solid var(--ca-f-border);
+  border-bottom: none;
+  padding-top: 14px;
+}
+
+/* ── Form grid ──────────────────────────────────────────────────────────────── */
+.wcca-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.wcca-field-full {
+  grid-column: 1 / -1;
+}
+
+/* ── Form fields ────────────────────────────────────────────────────────────── */
+.wcca-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ca-f-text-2);
+  margin-bottom: 5px;
+  letter-spacing: .02em;
+}
+
+.wcca-field input {
+  display: block;
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid var(--ca-f-border);
+  border-radius: var(--ca-f-r-sm);
+  font-family: var(--ca-f-font);
+  font-size: 14px;
+  color: var(--ca-f-text);
+  background: var(--ca-f-bg);
+  transition: border-color var(--ca-f-dur) var(--ca-f-ease),
+              box-shadow var(--ca-f-dur) var(--ca-f-ease),
+              background var(--ca-f-dur) var(--ca-f-ease);
+  outline: none;
+}
+
+.wcca-field input:focus {
+  border-color: var(--ca-f-blue);
+  background: var(--ca-f-surface);
+  box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+}
+
+.wcca-field input::placeholder {
+  color: var(--ca-f-text-3);
+}
+
+/* ── Tags ───────────────────────────────────────────────────────────────────── */
+.wcca-auto-tag {
+  display: inline-flex;
+  align-items: center;
+  background: var(--ca-f-blue-lt);
+  color: var(--ca-f-blue-dk);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 20px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.wcca-required {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ca-f-red);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* ── Consent text ───────────────────────────────────────────────────────────── */
+.wcca-consent-text {
+  background: var(--ca-f-bg);
+  border: 1px solid var(--ca-f-border);
+  border-left: 3px solid var(--ca-f-blue);
+  border-radius: 0 var(--ca-f-r-sm) var(--ca-f-r-sm) 0;
+  padding: 18px 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ca-f-text-2);
+}
+
+.wcca-consent-text ul {
+  margin: 10px 0;
+  padding-left: 18px;
+}
+
+.wcca-consent-text li {
+  margin-bottom: 5px;
+}
+
+.wcca-consent-text strong {
+  color: var(--ca-f-text);
+}
+
+/* ── Hint text ──────────────────────────────────────────────────────────────── */
+.wcca-hint {
+  font-size: 13px;
+  color: var(--ca-f-text-3);
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+/* ── Signature container ────────────────────────────────────────────────────── */
+.wcca-signature-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: var(--ca-f-blue-tint);
+  border: 2px solid var(--ca-f-blue);
+  border-radius: var(--ca-f-r-lg);
+  overflow: hidden;
+  cursor: crosshair;
+  transition: border-color var(--ca-f-dur) var(--ca-f-ease),
+              box-shadow var(--ca-f-dur) var(--ca-f-ease);
+}
+
+.wcca-signature-container:hover {
+  box-shadow: 0 0 0 4px rgba(37,99,235,.08);
+}
+
+.wcca-signature-container.wcca-sig-error {
+  border-color: var(--ca-f-red);
+  box-shadow: 0 0 0 4px rgba(220,38,38,.1);
+}
+
+/* Canvas fills container; dimensions set by JS */
+#wcca-signature-pad {
+  display: block;
+  position: absolute;
+  top: 0; left: 0;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* ── Signature placeholder ──────────────────────────────────────────────────── */
+.wcca-sig-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: var(--ca-f-text-3);
+  font-size: 14px;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity var(--ca-f-dur) var(--ca-f-ease);
+  line-height: 1.5;
+}
+
+.wcca-sig-placeholder span {
+  display: block;
+  font-size: 36px;
+  margin-bottom: 6px;
+  opacity: .5;
+}
+
+/* ── Signature actions row ──────────────────────────────────────────────────── */
+.wcca-sig-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.wcca-sig-status {
+  font-size: 13px;
+  font-weight: 600;
+  transition: color var(--ca-f-dur);
+}
+
+.wcca-sig-ok {
+  color: var(--ca-f-green);
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────────── */
+.wcca-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: none;
+  border-radius: var(--ca-f-r-md);
+  padding: 10px 20px;
+  font-family: var(--ca-f-font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
+  transition: transform var(--ca-f-dur) var(--ca-f-ease),
+              box-shadow var(--ca-f-dur) var(--ca-f-ease),
+              background var(--ca-f-dur) var(--ca-f-ease),
+              opacity var(--ca-f-dur) var(--ca-f-ease);
+}
+
+.wcca-btn:focus-visible {
+  outline: 2px solid var(--ca-f-blue);
+  outline-offset: 3px;
+}
+
+.wcca-btn-primary {
+  background: linear-gradient(135deg, var(--ca-f-blue), var(--ca-f-blue-dk));
+  color: var(--ca-f-text-inv);
+  box-shadow: 0 4px 12px rgba(37,99,235,.22);
+}
+
+.wcca-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(37,99,235,.32);
+  color: var(--ca-f-text-inv);
+}
+
+.wcca-btn-primary:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.wcca-btn-outline {
+  background: var(--ca-f-surface);
+  border: 1.5px solid var(--ca-f-border);
+  color: var(--ca-f-text-2);
+}
+
+.wcca-btn-outline:hover {
+  border-color: #b0bcd0;
+  background: var(--ca-f-bg);
+  color: var(--ca-f-text);
+}
+
+.wcca-btn-lg {
+  padding: 14px 36px;
+  font-size: 16px;
+  border-radius: var(--ca-f-r-lg);
+}
+
+/* ── Submit row ─────────────────────────────────────────────────────────────── */
+.wcca-submit-row {
+  text-align: center;
+  padding: 20px 0 8px;
+}
+
+.wcca-submit-hint {
+  font-size: 12px;
+  color: var(--ca-f-text-3);
+  margin: 10px 0 0;
+  line-height: 1.5;
+}
+
+/* ── Result area ────────────────────────────────────────────────────────────── */
+.wcca-result { margin-top: 16px; }
+
+/* ── Checkout consent wrapper ───────────────────────────────────────────────── */
+#wcca-checkout-consent-wrap {
+  margin-bottom: 14px;
+}
+
+#wcca-open-consent {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  font-family: var(--ca-f-font);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ca-f-blue);
+  background: var(--ca-f-blue-tint);
+  border: 2px solid var(--ca-f-blue);
+  border-radius: var(--ca-f-r-md);
+  cursor: pointer;
+  transition: background var(--ca-f-dur) var(--ca-f-ease),
+              color var(--ca-f-dur) var(--ca-f-ease),
+              box-shadow var(--ca-f-dur) var(--ca-f-ease);
+  text-align: center;
+}
+
+#wcca-open-consent:hover {
+  background: var(--ca-f-blue);
+  color: var(--ca-f-text-inv);
+  box-shadow: 0 4px 14px rgba(37,99,235,.22);
+}
+
+#wcca-open-consent:focus-visible {
+  outline: 2px solid var(--ca-f-blue);
+  outline-offset: 3px;
+}
+
+#wcca-consent-success {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ca-f-green);
+  margin-top: 8px;
+}
+
+/* Disabled place order button while consent pending */
+#place_order.wcca-consent-pending {
+  opacity: .4 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+/* ── Modal overlay ──────────────────────────────────────────────────────────── */
+#wcca-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 30, .65);
+  z-index: 999999;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+#wcca-modal-overlay[style*="display:none"],
+#wcca-modal-overlay[style*="display: none"] {
+  display: none !important;
+}
+
+/* ── Modal ──────────────────────────────────────────────────────────────────── */
+#wcca-modal {
+  background: var(--ca-f-surface);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px rgba(10,15,30,.3), 0 8px 24px rgba(10,15,30,.15);
+  animation: wcca-modal-in .25s var(--ca-f-ease);
+  scrollbar-width: thin;
+}
+
+@keyframes wcca-modal-in {
+  from { transform: translateY(20px) scale(.98); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* ── Modal header ───────────────────────────────────────────────────────────── */
+#wcca-modal-header {
+  background: linear-gradient(135deg, var(--ca-f-navy) 0%, #1e3a5f 100%);
+  color: var(--ca-f-text-inv);
+  padding: 24px 28px;
+  border-radius: 20px 20px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+#wcca-modal-header::after {
+  content: '';
+  position: absolute;
+  top: -20px; right: -20px;
+  width: 120px; height: 120px;
+  background: radial-gradient(circle, rgba(37,99,235,.2) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+#wcca-modal-header h2 {
+  margin: 0 0 5px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ca-f-text-inv);
+  position: relative;
+  z-index: 1;
+}
+
+#wcca-modal-header p {
+  margin: 0;
+  font-size: 13px;
+  opacity: .7;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Modal sections ─────────────────────────────────────────────────────────── */
+.wcca-modal-section {
+  padding: 22px 28px;
+  border-bottom: 1px solid var(--ca-f-border-2);
+}
+
+.wcca-modal-section:last-of-type {
+  border-bottom: none;
+}
+
+.wcca-modal-section h3 {
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ca-f-text);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Modal grid ─────────────────────────────────────────────────────────────── */
+.wcca-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.wcca-modal-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ca-f-text-3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 5px;
+}
+
+.wcca-modal-field input {
+  display: block;
+  width: 100%;
+  padding: 10px 13px;
+  border: 1.5px solid var(--ca-f-border);
+  border-radius: var(--ca-f-r-sm);
+  font-family: var(--ca-f-font);
+  font-size: 14px;
+  color: var(--ca-f-text);
+  background: var(--ca-f-bg);
+  outline: none;
+  transition: border-color var(--ca-f-dur) var(--ca-f-ease),
+              box-shadow var(--ca-f-dur) var(--ca-f-ease);
+}
+
+.wcca-modal-field input:focus {
+  border-color: var(--ca-f-blue);
+  background: var(--ca-f-surface);
+  box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+}
+
+/* ── Modal sig container ────────────────────────────────────────────────────── */
+.wcca-modal-sig-container {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  background: var(--ca-f-blue-tint);
+  border: 2px solid var(--ca-f-blue);
+  border-radius: var(--ca-f-r-md);
+  overflow: hidden;
+  cursor: crosshair;
+  transition: border-color var(--ca-f-dur), box-shadow var(--ca-f-dur);
+}
+
+.wcca-modal-sig-container:hover {
+  box-shadow: 0 0 0 4px rgba(37,99,235,.08);
+}
+
+.wcca-modal-sig-container.wcca-sig-error {
+  border-color: var(--ca-f-red);
+  box-shadow: 0 0 0 4px rgba(220,38,38,.1);
+}
+
+#wcca-modal-canvas {
+  display: block;
+  position: absolute;
+  top: 0; left: 0;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+/* ── Modal footer ───────────────────────────────────────────────────────────── */
+.wcca-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 20px 28px;
+  border-top: 1px solid var(--ca-f-border-2);
+}
+
+/* ── Modal buttons ──────────────────────────────────────────────────────────── */
+.wcca-modal-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--ca-f-blue), var(--ca-f-blue-dk));
+  color: var(--ca-f-text-inv);
+  border: none;
+  border-radius: var(--ca-f-r-md);
+  font-family: var(--ca-f-font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37,99,235,.2);
+  transition: transform var(--ca-f-dur) var(--ca-f-ease),
+              box-shadow var(--ca-f-dur) var(--ca-f-ease),
+              opacity var(--ca-f-dur);
+}
+
+.wcca-modal-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(37,99,235,.3);
+}
+
+.wcca-modal-btn-primary:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.wcca-modal-btn-primary:focus-visible {
+  outline: 2px solid var(--ca-f-blue);
+  outline-offset: 3px;
+}
+
+.wcca-modal-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  background: transparent;
+  border: 1.5px solid var(--ca-f-border);
+  border-radius: var(--ca-f-r-md);
+  font-family: var(--ca-f-font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ca-f-text-2);
+  cursor: pointer;
+  transition: border-color var(--ca-f-dur), background var(--ca-f-dur);
+}
+
+.wcca-modal-btn-outline:hover {
+  border-color: #b0bcd0;
+  background: var(--ca-f-bg);
+  color: var(--ca-f-text);
+}
+
+.wcca-modal-btn-outline:focus-visible {
+  outline: 2px solid var(--ca-f-blue);
+  outline-offset: 3px;
+}
+
+/* ── Modal error ────────────────────────────────────────────────────────────── */
+.wcca-modal-error {
+  margin: 0 28px 16px;
+  padding: 12px 16px;
+  background: var(--ca-f-red-bg);
+  border: 1px solid #fca5a5;
+  border-radius: var(--ca-f-r-sm);
+  color: #7f1d1d;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ── Modal success state ────────────────────────────────────────────────────── */
+.wcca-modal-success {
+  padding: 44px 28px;
+  text-align: center;
+}
+
+.wcca-modal-success strong {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 12px 0 8px;
+  color: var(--ca-f-text);
+}
+
+.wcca-modal-success p {
+  color: var(--ca-f-text-2);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .wcca-form-grid,
+  .wcca-modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wcca-consent-header {
+    padding: 24px 20px;
+  }
+
+  .wcca-order-summary,
+  .wcca-form-section {
+    padding: 18px 16px;
+  }
+
+  #wcca-modal {
+    border-radius: 16px;
+  }
+
+  .wcca-modal-footer {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .wcca-modal-btn-primary,
+  .wcca-modal-btn-outline {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .wcca-modal-section {
+    padding: 18px 16px;
+  }
+
+  #wcca-modal-header {
+    padding: 20px 16px;
+  }
+
+  .wcca-modal-error {
+    margin: 0 16px 14px;
+  }
+
+  .wcca-modal-footer {
+    padding: 16px;
+  }
+
+  .wcca-btn-lg {
+    padding: 13px 24px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 400px) {
+  .wcca-signature-container,
+  .wcca-modal-sig-container {
+    height: 130px;
+  }
+}
+

@@ -1,0 +1,1015 @@
+
+/* =============================================================================
+   WC Customer Affairs — Admin CSS
+   Design: Premium SaaS dashboard — Inter typography, cool slate palette
+   Author: WC Customer Affairs
+============================================================================= */
+
+/* ── Design Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  /* Palette */
+  --ca-bg:          #f0f2f7;
+  --ca-surface:     #ffffff;
+  --ca-surface-2:   #f8fafc;
+  --ca-border:      #e4e8f0;
+  --ca-border-2:    #f1f4fa;
+
+  /* Brand */
+  --ca-blue:        #2563eb;
+  --ca-blue-dark:   #1d4ed8;
+  --ca-blue-light:  #dbeafe;
+  --ca-navy:        #0f172a;
+  --ca-navy-mid:    #1e3a5f;
+
+  /* Text */
+  --ca-text:        #0f172a;
+  --ca-text-2:      #475569;
+  --ca-text-3:      #94a3b8;
+  --ca-text-inv:    #ffffff;
+
+  /* Status */
+  --ca-green:       #16a34a;
+  --ca-green-bg:    #dcfce7;
+  --ca-amber:       #d97706;
+  --ca-amber-bg:    #fef3c7;
+  --ca-red:         #dc2626;
+  --ca-red-bg:      #fee2e2;
+  --ca-blue-status: #2563eb;
+  --ca-blue-status-bg: #dbeafe;
+
+  /* Spacing */
+  --ca-r-sm:   8px;
+  --ca-r-md:   12px;
+  --ca-r-lg:   16px;
+  --ca-r-xl:   20px;
+  --ca-r-2xl:  24px;
+
+  /* Shadows */
+  --ca-shadow-sm:  0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+  --ca-shadow-md:  0 4px 16px rgba(15,23,42,.07), 0 2px 6px rgba(15,23,42,.04);
+  --ca-shadow-lg:  0 12px 32px rgba(15,23,42,.09), 0 4px 12px rgba(15,23,42,.05);
+  --ca-shadow-xl:  0 20px 48px rgba(15,23,42,.12), 0 8px 20px rgba(15,23,42,.06);
+
+  /* Typography */
+  --ca-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Transitions */
+  --ca-ease: cubic-bezier(.4, 0, .2, 1);
+  --ca-dur:  .2s;
+}
+
+/* ── Base reset ─────────────────────────────────────────────────────────────── */
+.wcca-wrap *,
+.wcca-wrap *::before,
+.wcca-wrap *::after {
+  box-sizing: border-box;
+}
+
+.wcca-wrap {
+  max-width: 1440px;
+  margin: 24px auto;
+  padding: 0 24px;
+  font-family: var(--ca-font);
+  color: var(--ca-text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+.wcca-header {
+  background: linear-gradient(135deg, var(--ca-navy) 0%, var(--ca-navy-mid) 100%);
+  border-radius: var(--ca-r-2xl);
+  padding: 36px 40px;
+  color: var(--ca-text-inv);
+  margin-bottom: 28px;
+  box-shadow: var(--ca-shadow-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.wcca-header::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 220px; height: 220px;
+  background: radial-gradient(circle, rgba(37,99,235,.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.wcca-header-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.wcca-header h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ca-text-inv);
+  letter-spacing: -.4px;
+  line-height: 1.2;
+}
+
+.wcca-header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: .7;
+  line-height: 1.6;
+}
+
+/* ── Stats bar ──────────────────────────────────────────────────────────────── */
+.wcca-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.wcca-stat-card {
+  background: var(--ca-surface);
+  border-radius: var(--ca-r-xl);
+  padding: 26px 28px;
+  border: 1px solid var(--ca-border);
+  box-shadow: var(--ca-shadow-md);
+  transition: transform var(--ca-dur) var(--ca-ease),
+              box-shadow var(--ca-dur) var(--ca-ease);
+  cursor: default;
+}
+
+.wcca-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ca-shadow-lg);
+}
+
+.stat-number {
+  display: block;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--ca-blue);
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ca-text-3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+/* ── Search ─────────────────────────────────────────────────────────────────── */
+.wcca-search-bar {
+  margin-bottom: 20px;
+}
+
+.wcca-search-bar input {
+  width: 380px;
+  max-width: 100%;
+  height: 44px;
+  border-radius: var(--ca-r-lg);
+  border: 1.5px solid var(--ca-border);
+  padding: 0 16px;
+  background: var(--ca-surface);
+  font-family: var(--ca-font);
+  font-size: 14px;
+  color: var(--ca-text);
+  transition: border-color var(--ca-dur) var(--ca-ease),
+              box-shadow var(--ca-dur) var(--ca-ease);
+  outline: none;
+}
+
+.wcca-search-bar input::placeholder {
+  color: var(--ca-text-3);
+}
+
+.wcca-search-bar input:focus {
+  border-color: var(--ca-blue);
+  box-shadow: 0 0 0 4px rgba(37,99,235,.1);
+}
+
+/* ── Table wrapper ──────────────────────────────────────────────────────────── */
+.wcca-table-wrap {
+  background: var(--ca-surface);
+  border-radius: var(--ca-r-xl);
+  border: 1px solid var(--ca-border);
+  overflow: hidden;
+  box-shadow: var(--ca-shadow-md);
+}
+
+/* ── Table ──────────────────────────────────────────────────────────────────── */
+.wcca-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.wcca-table thead {
+  background: var(--ca-surface-2);
+  border-bottom: 1px solid var(--ca-border);
+}
+
+.wcca-table thead th {
+  padding: 14px 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--ca-text-3);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.wcca-table tbody td {
+  padding: 15px 20px;
+  color: var(--ca-text-2);
+  border-bottom: 1px solid var(--ca-border-2);
+  vertical-align: middle;
+}
+
+.wcca-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.wcca-table tbody tr {
+  transition: background var(--ca-dur) var(--ca-ease);
+}
+
+.wcca-table tbody tr:hover {
+  background: #f7f9ff;
+}
+
+/* Customer cell with avatar */
+.wcca-customer-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: var(--ca-text);
+}
+
+.wcca-customer-cell img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--ca-border);
+}
+
+/* ── Badge / Tag ────────────────────────────────────────────────────────────── */
+.wcca-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 8px;
+  background: var(--ca-blue-light);
+  color: var(--ca-blue-dark);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.wcca-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.wcca-tag.signed {
+  background: var(--ca-green-bg);
+  color: var(--ca-green);
+}
+
+.wcca-tag.unsigned {
+  background: var(--ca-surface-2);
+  color: var(--ca-text-3);
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────────── */
+.wcca-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: var(--ca-r-md);
+  padding: 9px 18px;
+  font-family: var(--ca-font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  line-height: 1;
+  transition: transform var(--ca-dur) var(--ca-ease),
+              box-shadow var(--ca-dur) var(--ca-ease),
+              background var(--ca-dur) var(--ca-ease),
+              color var(--ca-dur) var(--ca-ease);
+}
+
+.wcca-btn:focus-visible {
+  outline: 2px solid var(--ca-blue);
+  outline-offset: 2px;
+}
+
+.wcca-btn-primary {
+  background: linear-gradient(135deg, var(--ca-blue), var(--ca-blue-dark));
+  color: var(--ca-text-inv);
+  box-shadow: 0 4px 12px rgba(37,99,235,.2);
+}
+
+.wcca-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(37,99,235,.28);
+  color: var(--ca-text-inv);
+}
+
+.wcca-btn-primary:active {
+  transform: translateY(0);
+}
+
+.wcca-btn-outline {
+  background: var(--ca-surface);
+  border: 1.5px solid var(--ca-border);
+  color: var(--ca-text-2);
+}
+
+.wcca-btn-outline:hover {
+  border-color: #c0c9d9;
+  background: var(--ca-surface-2);
+  color: var(--ca-text);
+}
+
+.wcca-btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: var(--ca-r-sm);
+}
+
+/* ── Back link ──────────────────────────────────────────────────────────────── */
+.wcca-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ca-blue);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  margin-bottom: 24px;
+  transition: gap var(--ca-dur) var(--ca-ease),
+              opacity var(--ca-dur) var(--ca-ease);
+}
+
+.wcca-back:hover {
+  opacity: .75;
+  gap: 4px;
+}
+
+/* ── Detail layout ──────────────────────────────────────────────────────────── */
+.wcca-detail-wrap {}
+
+.wcca-detail-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .wcca-detail-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Profile card ───────────────────────────────────────────────────────────── */
+.wcca-profile-card {
+  background: var(--ca-surface);
+  border-radius: var(--ca-r-xl);
+  border: 1px solid var(--ca-border);
+  padding: 32px 28px;
+  text-align: center;
+  box-shadow: var(--ca-shadow-md);
+  position: sticky;
+  top: 32px;
+}
+
+.wcca-avatar-lg img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid var(--ca-border);
+  object-fit: cover;
+}
+
+.wcca-profile-card h2 {
+  margin: 14px 0 4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ca-text);
+  letter-spacing: -.3px;
+}
+
+.wcca-profile-card .wcca-email {
+  color: var(--ca-text-3);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.wcca-profile-meta {
+  border-top: 1px solid var(--ca-border-2);
+  padding-top: 16px;
+}
+
+.wcca-profile-meta div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--ca-border-2);
+}
+
+.wcca-profile-meta div:last-child {
+  border-bottom: none;
+}
+
+.wcca-profile-meta label {
+  color: var(--ca-text-3);
+  font-weight: 500;
+}
+
+.wcca-profile-meta span {
+  font-weight: 600;
+  color: var(--ca-text);
+}
+
+.wcca-address-block {
+  margin-top: 20px;
+  text-align: left;
+  background: var(--ca-surface-2);
+  border: 1px solid var(--ca-border);
+  border-radius: var(--ca-r-md);
+  padding: 16px;
+}
+
+.wcca-address-block > label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--ca-text-3);
+  margin-bottom: 8px;
+}
+
+.wcca-address-block address {
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--ca-text-2);
+}
+
+/* ── Section cards ──────────────────────────────────────────────────────────── */
+.wcca-detail-main {}
+
+.wcca-section-card {
+  background: var(--ca-surface);
+  border-radius: var(--ca-r-xl);
+  border: 1px solid var(--ca-border);
+  padding: 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--ca-shadow-md);
+}
+
+.wcca-section-card h3 {
+  margin: 0 0 20px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ca-text);
+  letter-spacing: -.2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Status badges ──────────────────────────────────────────────────────────── */
+.wcca-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.wcca-status.processing  { background: var(--ca-blue-status-bg); color: var(--ca-blue-status); }
+.wcca-status.completed   { background: var(--ca-green-bg); color: var(--ca-green); }
+.wcca-status.on-hold     { background: var(--ca-amber-bg); color: var(--ca-amber); }
+.wcca-status.cancelled   { background: var(--ca-red-bg); color: var(--ca-red); }
+.wcca-status.pending     { background: #f3f4f6; color: #6b7280; }
+.wcca-status.refunded    { background: #f3e8ff; color: #7c3aed; }
+.wcca-status.failed      { background: var(--ca-red-bg); color: var(--ca-red); }
+
+/* ── Timeline ───────────────────────────────────────────────────────────────── */
+.wcca-timeline {
+  position: relative;
+  padding-left: 32px;
+}
+
+.wcca-timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--ca-blue-light);
+  border-radius: 1px;
+}
+
+.wcca-timeline-item {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.wcca-timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.wcca-timeline-dot {
+  position: absolute;
+  left: -32px;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--ca-blue);
+  border: 3px solid var(--ca-surface);
+  box-shadow: 0 0 0 2px var(--ca-blue);
+}
+
+.wcca-timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+  gap: 12px;
+}
+
+.wcca-timeline-header strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ca-text);
+}
+
+.wcca-timeline-header time {
+  font-size: 12px;
+  color: var(--ca-text-3);
+  white-space: nowrap;
+}
+
+.wcca-timeline-content p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--ca-text-2);
+}
+
+/* ── Signature preview ──────────────────────────────────────────────────────── */
+.wcca-sig-preview {
+  display: block;
+  width: 200px;
+  max-width: 100%;
+  height: 64px;
+  object-fit: contain;
+  background: var(--ca-surface-2);
+  border-radius: var(--ca-r-md);
+  border: 1px solid var(--ca-border);
+  padding: 8px;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────────────── */
+.wcca-empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--ca-text-3);
+}
+
+.wcca-empty-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.wcca-empty p {
+  font-size: 14px;
+  margin: 0;
+}
+
+
+/* =====================================================
+   FEEDBACK & SUPPORT
+   Premium Modern UI
+===================================================== */
+
+.wcca-feedback-page{
+    max-width:1280px;
+    margin:40px auto;
+    font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+
+/* ================= HERO ================= */
+
+.wcca-hero{
+    position:relative;
+    overflow:hidden;
+    padding:70px;
+    border-radius:28px;
+    background:
+        radial-gradient(circle at top right,rgba(255,255,255,.12),transparent 35%),
+        linear-gradient(135deg,#2563eb 0%,#4f46e5 50%,#1e40af 100%);
+    color:#fff;
+    box-shadow:
+        0 20px 60px rgba(37,99,235,.20),
+        inset 0 1px 0 rgba(255,255,255,.15);
+}
+
+.wcca-hero::before{
+    content:"";
+    position:absolute;
+    width:420px;
+    height:420px;
+    right:-160px;
+    top:-160px;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+}
+
+.wcca-hero::after{
+    content:"";
+    position:absolute;
+    width:250px;
+    height:250px;
+    left:-100px;
+    bottom:-100px;
+    border-radius:50%;
+    background:rgba(255,255,255,.05);
+}
+
+.wcca-highlight{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 18px;
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.15);
+    backdrop-filter:blur(10px);
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:24px;
+}
+
+.wcca-hero h1{
+    font-size:48px;
+    font-weight:800;
+    letter-spacing:-1.5px;
+    margin:0 0 20px;
+    color:#fff;
+    position:relative;
+    z-index:2;
+}
+
+.wcca-hero p{
+    max-width:720px;
+    font-size:17px;
+    line-height:1.9;
+    opacity:.94;
+    margin:0;
+    position:relative;
+    z-index:2;
+}
+
+/* ================= GRID ================= */
+
+.wcca-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+    gap:28px;
+    margin-top:38px;
+}
+
+/* ================= CARD ================= */
+
+.wcca-card{
+
+    position:relative;
+    background:#fff;
+    border-radius:22px;
+    padding:34px;
+    overflow:hidden;
+
+    border:1px solid #edf2f7;
+
+    box-shadow:
+        0 8px 20px rgba(15,23,42,.04),
+        0 18px 40px rgba(15,23,42,.03);
+
+    transition:all .35s ease;
+}
+
+.wcca-card::before{
+
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:5px;
+
+    background:linear-gradient(90deg,#2563eb,#4f46e5);
+
+}
+
+.wcca-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+        0 18px 45px rgba(15,23,42,.08),
+        0 28px 60px rgba(15,23,42,.05);
+
+}
+
+.wcca-card h3{
+
+    font-size:22px;
+    margin:0 0 16px;
+    color:#0f172a;
+
+}
+
+.wcca-card p{
+
+    color:#64748b;
+    font-size:14px;
+    line-height:1.9;
+    margin:0;
+
+}
+
+.wcca-card ul{
+
+    margin:22px 0 0;
+    padding:0;
+    list-style:none;
+
+}
+
+.wcca-card li{
+
+    position:relative;
+    padding-left:30px;
+    margin-bottom:14px;
+    color:#334155;
+    font-size:14px;
+
+}
+
+.wcca-card li::before{
+
+    content:"✔";
+    position:absolute;
+    left:0;
+    top:0;
+    color:#22c55e;
+    font-weight:700;
+
+}
+
+/* ================= CONTACT ================= */
+
+.wcca-contact{
+
+    margin-top:42px;
+
+    background:
+        linear-gradient(180deg,#ffffff,#fbfcff);
+
+    border:1px solid #eef2f7;
+
+    border-radius:24px;
+
+    padding:60px;
+
+    text-align:center;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.05);
+
+}
+
+.wcca-contact h2{
+
+    margin:0 0 16px;
+    font-size:38px;
+    font-weight:800;
+    color:#0f172a;
+
+}
+
+.wcca-contact p{
+
+    max-width:760px;
+    margin:0 auto 34px;
+
+    color:#64748b;
+
+    font-size:15px;
+    line-height:1.9;
+
+}
+
+/* ================= BUTTON ================= */
+
+.wcca-btn-main{
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    padding:16px 34px;
+
+    border-radius:14px;
+
+    text-decoration:none;
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+    color:#fff;
+
+    font-weight:700;
+
+    transition:.3s;
+
+    box-shadow:
+        0 12px 30px rgba(37,99,235,.20);
+
+}
+
+.wcca-btn-main:hover{
+
+    transform:translateY(-3px) scale(1.02);
+
+    color:#fff;
+
+    box-shadow:
+        0 18px 45px rgba(37,99,235,.28);
+
+}
+
+/* ================= FOOTER ================= */
+
+.wcca-footer-note{
+
+    margin-top:24px;
+
+    color:#94a3b8;
+
+    font-size:13px;
+
+    line-height:1.8;
+
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+
+    .wcca-hero{
+
+        padding:45px;
+
+    }
+
+    .wcca-hero h1{
+
+        font-size:34px;
+
+    }
+
+    .wcca-contact{
+
+        padding:40px 28px;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .wcca-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .wcca-hero{
+
+        padding:32px;
+
+    }
+
+    .wcca-contact h2{
+
+        font-size:28px;
+
+    }
+
+}
+
+.wcca-settings-page{
+    max-width:1100px;
+    margin:30px auto;
+}
+
+.wcca-settings-page .wcca-section-card{
+    background:#fff;
+    border-radius:18px;
+    padding:30px;
+    margin-top:24px;
+    border:1px solid #eef2f7;
+    box-shadow:0 8px 24px rgba(15,23,42,.05);
+}
+
+.wcca-settings-page h2{
+    margin-top:0;
+    margin-bottom:24px;
+    font-size:22px;
+    color:#0f172a;
+}
+
+.wcca-settings-page label{
+    font-size:15px;
+    color:#334155;
+}
+
+.wcca-settings-page input[type="checkbox"]{
+    transform:scale(1.15);
+    margin-right:10px;
+}
+
+.wcca-settings-page input[type="text"]{
+    border-radius:10px;
+    border:1px solid #dbe4ee;
+    padding:10px 14px;
+}
+
+.wcca-settings-page .button-primary{
+    padding:10px 24px;
+    border-radius:10px;
+}
+
+.wcca-placeholder-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.wcca-placeholder {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 16px;
+    background: #f8f9fc;
+    border: 1px solid #e3e6ea;
+    border-radius: 10px;
+    min-width: 220px;
+}
+
+.wcca-placeholder code {
+    font-size: 14px;
+    font-weight: 600;
+    color: #135e96;
+}
+
+.wcca-placeholder small {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.wcca-section-card h2 {
+    margin-bottom: 12px;
+}
+
+.wcca-section-card p {
+    line-height: 1.7;
+}
