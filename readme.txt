@@ -1,8 +1,8 @@
-=== WooCommerce Checkout Consent ===
+=== Checkout Consent for WooCommerce ===
 Contributors: parthodhvani
 Tags: woocommerce, consent, signature, checkout, gdpr
 Requires at least: 6.0
-Tested up to: 6.7
+Tested up to: 7.0
 Requires PHP: 8.0
 Stable tag: 1.2.0
 License: GPLv2 or later
@@ -12,7 +12,7 @@ Require customers to review and digitally sign a consent form before completing 
 
 == Description ==
 
-WooCommerce Checkout Consent adds a digital consent and signature step to your WooCommerce store. Before a customer can place an order, they review a customizable consent agreement and sign it with their mouse or finger. The signed consent is stored against the order and a PDF record is generated automatically.
+Checkout Consent for WooCommerce adds a digital consent and signature step to your WooCommerce store. Before a customer can place an order, they review a customizable consent agreement and sign it with their mouse or finger. The signed consent is stored against the order and a PDF record is generated automatically.
 
 **Key features**
 

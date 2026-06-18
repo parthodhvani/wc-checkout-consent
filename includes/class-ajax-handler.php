@@ -20,7 +20,7 @@ class WCCA_Ajax_Handler {
 
         // PDF download denied for guests
         add_action( 'wp_ajax_nopriv_wcca_download_pdf', static function () {
-            wp_die( esc_html__( 'Login required to download consent PDFs.', 'woocommerce-checkout-consent' ), 403 );
+            wp_die( esc_html__( 'Login required to download consent PDFs.', 'checkout-consent-for-woocommerce' ), 403 );
         } );
     }
 
@@ -34,24 +34,26 @@ class WCCA_Ajax_Handler {
         check_ajax_referer( 'wcca_sign', 'nonce' );
 
         if ( ! is_user_logged_in() ) {
-            wp_send_json_error( array( 'message' => __( 'Login required.', 'woocommerce-checkout-consent' ) ), 403 );
+            wp_send_json_error( array( 'message' => __( 'Login required.', 'checkout-consent-for-woocommerce' ) ), 403 );
         }
 
         $order_id = absint( $_POST['order_id'] ?? 0 );
         if ( ! $order_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid order.', 'woocommerce-checkout-consent' ) ), 400 );
+            wp_send_json_error( array( 'message' => __( 'Invalid order.', 'checkout-consent-for-woocommerce' ) ), 400 );
         }
 
         $order = wc_get_order( $order_id );
         if ( ! $order || (int) $order->get_customer_id() !== get_current_user_id() ) {
-            wp_send_json_error( array( 'message' => __( 'Access denied.', 'woocommerce-checkout-consent' ) ), 403 );
+            wp_send_json_error( array( 'message' => __( 'Access denied.', 'checkout-consent-for-woocommerce' ) ), 403 );
         }
 
         if ( WCCA_Database::get_by_order( $order_id ) ) {
-            wp_send_json_error( array( 'message' => __( 'Consent already recorded for this order.', 'woocommerce-checkout-consent' ) ), 409 );
+            wp_send_json_error( array( 'message' => __( 'Consent already recorded for this order.', 'checkout-consent-for-woocommerce' ) ), 409 );
         }
 
-        $signature = self::validate_signature_data( $_POST['signature'] ?? '' );
+        // Strictly validated as a base64 PNG data URI inside validate_signature_data().
+        $raw_signature = isset( $_POST['signature'] ) ? wp_unslash( $_POST['signature'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $signature     = self::validate_signature_data( $raw_signature );
         if ( is_wp_error( $signature ) ) {
             wp_send_json_error( array( 'message' => $signature->get_error_message() ), 400 );
         }
@@ -68,7 +70,7 @@ class WCCA_Ajax_Handler {
         ) );
 
         if ( ! $sig_id ) {
-            wp_send_json_error( array( 'message' => __( 'Failed to save. Please try again.', 'woocommerce-checkout-consent' ) ), 500 );
+            wp_send_json_error( array( 'message' => __( 'Failed to save. Please try again.', 'checkout-consent-for-woocommerce' ) ), 500 );
         }
 
         WCCA_Database::log_action( $sig_id, 'signed' );
@@ -80,7 +82,7 @@ class WCCA_Ajax_Handler {
         }
 
         wp_send_json_success( array(
-            'message' => __( 'Consent signed successfully.', 'woocommerce-checkout-consent' ),
+            'message' => __( 'Consent signed successfully.', 'checkout-consent-for-woocommerce' ),
             'pdf_url' => esc_url( add_query_arg( array(
                 'action' => 'wcca_download_pdf',
                 'sig_id' => $sig_id,
@@ -98,21 +100,15 @@ class WCCA_Ajax_Handler {
     public static function download_pdf(): void {
         $sig_id = absint( $_GET['sig_id'] ?? 0 );
         if ( ! $sig_id ) {
-            wp_die( esc_html__( 'Invalid request.', 'woocommerce-checkout-consent' ), 400 );
+            wp_die( esc_html__( 'Invalid request.', 'checkout-consent-for-woocommerce' ), 400 );
         }
 
         check_ajax_referer( 'wcca_pdf_' . $sig_id, 'nonce' );
 
-        global $wpdb;
-        $sig = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT * FROM {$wpdb->prefix}wcca_signatures WHERE id = %d LIMIT 1",
-                $sig_id
-            )
-        );
+        $sig = WCCA_Database::get_signature( $sig_id );
 
         if ( ! $sig ) {
-            wp_die( esc_html__( 'Record not found.', 'woocommerce-checkout-consent' ), 404 );
+            wp_die( esc_html__( 'Record not found.', 'checkout-consent-for-woocommerce' ), 404 );
         }
 
         // Allow the record owner or any shop manager
@@ -120,14 +116,14 @@ class WCCA_Ajax_Handler {
         $is_manager = current_user_can( 'manage_woocommerce' );
 
         if ( ! $is_owner && ! $is_manager ) {
-            wp_die( esc_html__( 'Access denied.', 'woocommerce-checkout-consent' ), 403 );
+            wp_die( esc_html__( 'Access denied.', 'checkout-consent-for-woocommerce' ), 403 );
         }
 
         // Regenerate PDF if it no longer exists on disk
         if ( empty( $sig->pdf_path ) || ! file_exists( $sig->pdf_path ) ) {
             $path = WCCA_PDF_Generator::generate( $sig_id );
             if ( ! $path ) {
-                wp_die( esc_html__( 'PDF could not be generated. Please try again.', 'woocommerce-checkout-consent' ), 500 );
+                wp_die( esc_html__( 'PDF could not be generated. Please try again.', 'checkout-consent-for-woocommerce' ), 500 );
             }
             $sig->pdf_path = $path;
         }
@@ -153,13 +149,15 @@ class WCCA_Ajax_Handler {
     public static function save_cart_consent(): void {
         check_ajax_referer( 'wcca_cart_consent', 'nonce' );
 
-        $signature = self::validate_signature_data( $_POST['signature'] ?? '' );
+        // Strictly validated as a base64 PNG data URI inside validate_signature_data().
+        $raw_signature = isset( $_POST['signature'] ) ? wp_unslash( $_POST['signature'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+        $signature     = self::validate_signature_data( $raw_signature );
         if ( is_wp_error( $signature ) ) {
             wp_send_json_error( array( 'message' => $signature->get_error_message() ), 400 );
         }
 
         if ( ! WC()->session ) {
-            wp_send_json_error( array( 'message' => __( 'Session unavailable. Please refresh and try again.', 'woocommerce-checkout-consent' ) ), 500 );
+            wp_send_json_error( array( 'message' => __( 'Session unavailable. Please refresh and try again.', 'checkout-consent-for-woocommerce' ) ), 500 );
         }
 
         WC()->session->set( 'wcca_cart_consent', array(
@@ -172,7 +170,7 @@ class WCCA_Ajax_Handler {
             'signed_at'  => current_time( 'mysql' ),
         ) );
 
-        wp_send_json_success( array( 'message' => __( 'Consent saved.', 'woocommerce-checkout-consent' ) ) );
+        wp_send_json_success( array( 'message' => __( 'Consent saved.', 'checkout-consent-for-woocommerce' ) ) );
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
@@ -185,19 +183,19 @@ class WCCA_Ajax_Handler {
      */
     private static function validate_signature_data( $raw ): string|\WP_Error {
         if ( ! is_string( $raw ) || empty( $raw ) ) {
-            return new \WP_Error( 'invalid_signature', __( 'Signature data is missing.', 'woocommerce-checkout-consent' ) );
+            return new \WP_Error( 'invalid_signature', __( 'Signature data is missing.', 'checkout-consent-for-woocommerce' ) );
         }
 
         // Must be a PNG data URI
         if ( ! preg_match( '/^data:image\/png;base64,[A-Za-z0-9+\/]+=*$/', $raw ) ) {
-            return new \WP_Error( 'invalid_signature', __( 'Invalid signature format.', 'woocommerce-checkout-consent' ) );
+            return new \WP_Error( 'invalid_signature', __( 'Invalid signature format.', 'checkout-consent-for-woocommerce' ) );
         }
 
         // Sanity-check the base64 payload decodes to something PNG-shaped
         $b64  = substr( $raw, strlen( 'data:image/png;base64,' ) );
         $data = base64_decode( $b64, true );
         if ( $data === false || strlen( $data ) < 8 || substr( $data, 0, 8 ) !== "\x89PNG\r\n\x1a\n" ) {
-            return new \WP_Error( 'invalid_signature', __( 'Signature image is corrupt.', 'woocommerce-checkout-consent' ) );
+            return new \WP_Error( 'invalid_signature', __( 'Signature image is corrupt.', 'checkout-consent-for-woocommerce' ) );
         }
 
         return $raw;

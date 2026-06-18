@@ -31,13 +31,17 @@ class WCCA_Checkout_Validation {
             return;
         }
 
+        // WooCommerce verifies the checkout nonce before firing
+        // woocommerce_checkout_process, so the value is already trusted here.
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $consent_posted = isset( $_POST['wcca_checkout_consent'] )
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing
             ? sanitize_text_field( wp_unslash( $_POST['wcca_checkout_consent'] ) )
             : '';
 
         if ( empty( $already_signed ) || $consent_posted !== '1' ) {
             wc_add_notice(
-                __( 'Please sign the consent form before placing your order.', 'woocommerce-checkout-consent' ),
+                __( 'Please sign the consent form before placing your order.', 'checkout-consent-for-woocommerce' ),
                 'error'
             );
             // Stop checkout flow

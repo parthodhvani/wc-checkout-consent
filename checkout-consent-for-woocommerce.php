@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       WooCommerce Checkout Consent
- * Plugin URI:        https://example.com/woocommerce-checkout-consent
- * Description:       Require customers to review and sign a digital consent form before checkout. Capture signatures, enforce consent acceptance, customize consent templates, and manage customer consent records from a dedicated WooCommerce dashboard.
+ * Plugin Name:       Checkout Consent for WooCommerce
+ * Plugin URI:        https://github.com/parthodhvani/wc-checkout-consent
+ * Description:       Require customers to review and sign a digital consent form before checkout. Capture signatures, enforce consent acceptance, customize consent templates, and manage customer consent records from a dedicated dashboard.
  * Version:           1.2.0
  * Requires at least: 6.0
  * Requires PHP:      8.0
@@ -10,7 +10,7 @@
  * Author:            Parth Odhvani
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       woocommerce-checkout-consent
+ * Text Domain:       checkout-consent-for-woocommerce
  * Domain Path:       /languages
  */
 
@@ -32,15 +32,6 @@ require_once WCCA_PLUGIN_DIR . 'includes/class-export-import.php'; // FIX: was m
 
 // Create DB tables on activation
 register_activation_hook( __FILE__, array( 'WCCA_Database', 'create_tables' ) );
-
-// Load translations.
-add_action( 'init', static function () {
-    load_plugin_textdomain(
-        'woocommerce-checkout-consent',
-        false,
-        dirname( plugin_basename( __FILE__ ) ) . '/languages'
-    );
-} );
 
 // Declare compatibility with WooCommerce High-Performance Order Storage (HPOS).
 add_action( 'before_woocommerce_init', static function () {
@@ -80,11 +71,11 @@ function wcca_thankyou_pdf_download_button( int $order_id ): void {
     }
 
     // Build download URL
-    $download_url = esc_url( add_query_arg( [
+    $download_url = add_query_arg( [
         'action' => 'wcca_download_pdf',
         'sig_id' => $sig->id,
         'nonce'  => wp_create_nonce( 'wcca_pdf_' . $sig->id ),
-    ], admin_url( 'admin-ajax.php' ) ) );
+    ], admin_url( 'admin-ajax.php' ) );
 
     ?>
     <div class="wcca-thankyou-pdf-wrap" style="
@@ -109,7 +100,7 @@ function wcca_thankyou_pdf_download_button( int $order_id ): void {
                 Download and keep it for your records.
             </p>
         </div>
-        <a href="<?php echo $download_url; ?>"
+        <a href="<?php echo esc_url( $download_url ); ?>"
            class="wcca-btn-download"
            style="
                display: inline-flex;

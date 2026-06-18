@@ -12,7 +12,9 @@ need to **start services** (not reinstall).
 
 ### Where things live
 - WordPress install: `~/wordpress` (the plugin is symlinked in at
-  `~/wordpress/wp-content/plugins/woocommerce-checkout-consent -> /workspace`).
+  `~/wordpress/wp-content/plugins/checkout-consent-for-woocommerce -> /workspace`).
+  Note: the plugin slug/main file is `checkout-consent-for-woocommerce` (renamed from
+  `woocommerce-checkout-consent` to satisfy the WooCommerce trademark policy).
 - Admin login: user `admin` / password `admin123`, site at `http://localhost:8080`.
 - DB: MariaDB, database `wordpress`, user `wpuser` / `wppass`.
 
@@ -44,3 +46,9 @@ need to **start services** (not reinstall).
 - There is no lint config, no automated tests, and no build step in this repo. "Running" the
   app means exercising it through the WordPress site above (e.g. the product → checkout →
   sign consent → place order flow).
+- WordPress.org compliance is verified with the Plugin Check tool:
+  `wp plugin check checkout-consent-for-woocommerce`. Run it against a clean extracted copy
+  of the build zip (not the repo root via symlink) so dev-only files like `AGENTS.md` and
+  `.git` are not flagged. The plugin currently passes with 0 errors / 0 warnings.
+- Regenerate the translation template after changing strings:
+  `wp i18n make-pot /workspace /workspace/languages/checkout-consent-for-woocommerce.pot --domain=checkout-consent-for-woocommerce --exclude=languages`.

@@ -56,17 +56,34 @@ class WCCA_Export_Import
         $columns = array('id', 'order_id', 'customer_id', 'first_name', 'last_name', 'email', 'phone', 'address', 'signed_at', 'ip_address');
         $filename = 'wcca-consents-' . gmdate('Y-m-d') . '.csv';
 
+        $csv = self::csv_line($columns);
+        foreach ($rows as $row) {
+            $csv .= self::csv_line(array_map(static fn($k) => (string) ($row[$k] ?? ''), $columns));
+        }
+
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         header('Pragma: no-cache');
-
-        $out = fopen('php://output', 'w');
-        fputcsv($out, $columns);
-        foreach ($rows as $row) {
-            fputcsv($out, array_map(fn($k) => $row[$k] ?? '', $columns));
-        }
-        fclose($out);
+        // CSV file download — not HTML output.
+        echo $csv; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         exit;
+    }
+
+    /**
+     * Build a single RFC-4180 style CSV line. Newlines within values are
+     * collapsed to spaces so each record stays on one line.
+     *
+     * @param array $fields Field values.
+     * @return string
+     */
+    private static function csv_line(array $fields): string
+    {
+        $escaped = array_map(static function ($field) {
+            $field = str_replace(array("\r\n", "\r", "\n"), ' ', (string) $field);
+            return '"' . str_replace('"', '""', $field) . '"';
+        }, $fields);
+
+        return implode(',', $escaped) . "\r\n";
     }
 
     private static function export_json(): void
@@ -84,48 +101,58 @@ class WCCA_Export_Import
 
     private static function import_csv(): array
     {
-        if (empty($_FILES['wcca_import_file']['tmp_name'])) {
-            return array('type' => 'error', 'message' => __('No file uploaded.', 'woocommerce-checkout-consent'));
+        // The request nonce is verified by the caller (handle_requests()).
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $tmp_name = isset($_FILES['wcca_import_file']['tmp_name']) ? sanitize_text_field(wp_unslash($_FILES['wcca_import_file']['tmp_name'])) : '';
+
+        if ('' === $tmp_name) {
+            return array('type' => 'error', 'message' => __('No file uploaded.', 'checkout-consent-for-woocommerce'));
         }
 
-        $file = $_FILES['wcca_import_file']['tmp_name'];
-
-        if (!is_uploaded_file($file)) {
-            return array('type' => 'error', 'message' => __('Invalid file upload.', 'woocommerce-checkout-consent'));
+        if (!is_uploaded_file($tmp_name)) {
+            return array('type' => 'error', 'message' => __('Invalid file upload.', 'checkout-consent-for-woocommerce'));
         }
 
-        $handle = fopen($file, 'r'); // phpcs:ignore WordPress.WP.AlternativeFunctions
-        if (!$handle) {
-            return array('type' => 'error', 'message' => __('Could not read file.', 'woocommerce-checkout-consent'));
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        global $wp_filesystem;
+        WP_Filesystem();
+
+        $contents = $wp_filesystem ? $wp_filesystem->get_contents($tmp_name) : false;
+        if (false === $contents || '' === $contents) {
+            return array('type' => 'error', 'message' => __('Could not read file.', 'checkout-consent-for-woocommerce'));
         }
 
+        $lines = preg_split('/\r\n|\r|\n/', $contents);
+        $lines = array_values(array_filter((array) $lines, static fn($l) => '' !== trim($l)));
+
+        if (empty($lines)) {
+            return array('type' => 'error', 'message' => __('CSV file is empty.', 'checkout-consent-for-woocommerce'));
+        }
+
+        $header   = array_map('trim', str_getcsv(array_shift($lines)));
         $required = array('order_id', 'customer_id', 'first_name', 'last_name', 'email', 'phone', 'address', 'signed_at');
-        $header = fgetcsv($handle);
-
-        if (!$header) {
-            fclose($handle);
-            return array('type' => 'error', 'message' => __('CSV file is empty.', 'woocommerce-checkout-consent'));
-        }
-
-        $header = array_map('trim', $header);
 
         foreach ($required as $col) {
             if (!in_array($col, $header, true)) {
-                fclose($handle);
-                /* translators: %s: required CSV column name. */
-                return array('type' => 'error', 'message' => sprintf(__('Missing required column: %s', 'woocommerce-checkout-consent'), $col));
+                return array(
+                    'type'    => 'error',
+                    /* translators: %s: required CSV column name. */
+                    'message' => sprintf(__('Missing required column: %s', 'checkout-consent-for-woocommerce'), $col),
+                );
             }
         }
 
         $imported = 0;
-        $skipped = 0;
+        $skipped  = 0;
 
-        while (($row = fgetcsv($handle)) !== false) {
-            $data = array_combine($header, $row);
-            if (!$data) {
+        foreach ($lines as $line) {
+            $row = str_getcsv($line);
+            if (count($row) !== count($header)) {
                 $skipped++;
                 continue;
             }
+
+            $data = array_combine($header, $row);
 
             $order_id = absint($data['order_id'] ?? 0);
             if (!$order_id) {
@@ -140,14 +167,14 @@ class WCCA_Export_Import
             }
 
             $result = WCCA_Database::save_signature(array(
-                'order_id' => $order_id,
+                'order_id'    => $order_id,
                 'customer_id' => absint($data['customer_id'] ?? 0),
-                'first_name' => sanitize_text_field($data['first_name'] ?? ''),
-                'last_name' => sanitize_text_field($data['last_name'] ?? ''),
-                'email' => sanitize_email($data['email'] ?? ''),
-                'phone' => sanitize_text_field($data['phone'] ?? ''),
-                'address' => sanitize_textarea_field($data['address'] ?? ''),
-                'signature' => '',
+                'first_name'  => sanitize_text_field($data['first_name'] ?? ''),
+                'last_name'   => sanitize_text_field($data['last_name'] ?? ''),
+                'email'       => sanitize_email($data['email'] ?? ''),
+                'phone'       => sanitize_text_field($data['phone'] ?? ''),
+                'address'     => sanitize_textarea_field($data['address'] ?? ''),
+                'signature'   => '',
             ));
 
             if ($result) {
@@ -157,16 +184,13 @@ class WCCA_Export_Import
             }
         }
 
-        fclose($handle);
-
-        return array(
-            'type' => 'success',
+        $message = sprintf(
             /* translators: 1: number of imported records, 2: number of skipped records. */
-            'message' => sprintf(
-                __('Import complete: %1$d records imported, %2$d skipped (already exist or invalid).', 'woocommerce-checkout-consent'),
-                $imported,
-                $skipped
-            ),
+            __('Import complete: %1$d records imported, %2$d skipped (already exist or invalid).', 'checkout-consent-for-woocommerce'),
+            $imported,
+            $skipped
         );
+
+        return array('type' => 'success', 'message' => $message);
     }
 }

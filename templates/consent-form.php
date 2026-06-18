@@ -33,11 +33,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($order->get_items() as $item): ?>
+                    <?php foreach ($order->get_items() as $wcca_item): ?>
                         <tr>
-                            <td><?php echo esc_html($item->get_name()); ?></td>
-                            <td><?php echo esc_html($item->get_quantity()); ?></td>
-                            <td><?php echo wp_kses_post( wc_price( $item->get_total() ) ); ?></td>
+                            <td><?php echo esc_html($wcca_item->get_name()); ?></td>
+                            <td><?php echo esc_html($wcca_item->get_quantity()); ?></td>
+                            <td><?php echo wp_kses_post( wc_price( $wcca_item->get_total() ) ); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
